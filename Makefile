@@ -1,6 +1,6 @@
 NAME := kube-cleanup-operator
-AUTHOR=lwolf
-VERSION ?= 0.3
+AUTHOR=doubleswirve
+VERSION ?= 0.0.2-beta
 REGISTRY ?= quay.io
 GIT_SHA=$(shell git --no-pager describe --always --dirty)
 BUILD_TIME=$(shell date '+%s')
@@ -25,7 +25,7 @@ build: golang
 	@mkdir -p bin
 	go build -ldflags "${LFLAGS}" -o bin/$(NAME) ./cmd
 
-static: golang 
+static: golang
 	@echo "--> Compiling the static binary"
 	@mkdir -p bin
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -a -tags netgo -ldflags "-w ${LFLAGS}" -o bin/${NAME} ./cmd
@@ -42,11 +42,11 @@ docker-release:
 	@echo "--> Building a release image"
 	@$(MAKE) static
 	@$(MAKE) docker
-	@docker push ${REGISTRY}/${AUTHOR}/${NAME}:${VERSION}
+	@docker push govhawk/${NAME}:${VERSION}
 
 docker:
 	@echo "--> Building the docker image"
-	docker build -t ${REGISTRY}/${AUTHOR}/${NAME}:${VERSION} .
+	docker build -t govhawk/${NAME}:${VERSION} .
 
 release: static
 	mkdir -p release
